@@ -1,0 +1,9 @@
+gradio>=5.0
+torch>=2.2
+diffusers>=0.32
+transformers>=4.40
+accelerate
+sentencepiece
+Pillow>=10.0
+numpy>=1.24
+huggingface_hub>=0.20
