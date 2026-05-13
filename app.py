@@ -95,6 +95,15 @@ def generate(
     progress=gr.Progress(),
 ) -> tuple[Image.Image, str, str]:
     """Run the full pipeline: prompt → generation → slice → pack → atlas."""
+    if not torch.cuda.is_available():
+        raise gr.Error(
+            "This Space is running on CPU. Flux requires a GPU.\n\n"
+            "Solutions:\n"
+            "1. Run locally on your GPU machine: github.com/Ltz-lab/sprite-forge\n"
+            "2. Upgrade this Space to ZeroGPU (HF Pro)\n"
+            "3. Use the self-hosted CLI version"
+        )
+
     rows = DIRS_MAP[directions]
     cols = FRAMES_MAP[frames]
 
@@ -174,6 +183,8 @@ h1 { text-align: center; }
 
 
 def build_ui():
+    has_gpu = torch.cuda.is_available()
+
     with gr.Blocks(
         css=CSS,
         title="sprite-forge",
@@ -184,6 +195,16 @@ def build_ui():
             "Type a character description → get a 4-direction walk-cycle sprite sheet. "
             "Powered by Flux.1-schnell + ControlNet."
         )
+
+        if not has_gpu:
+            gr.Warning(
+                "⚠️ This Space needs a GPU to run.\n\n"
+                "**To use it:**\n"
+                "1. Run locally: `pip install sprite-sheet-forge` on a machine with an NVIDIA GPU\n"
+                "2. Or upgrade the Space to ZeroGPU (requires HF Pro subscription ~$9/mo)\n"
+                "3. Or use the Replicate API version\n\n"
+                "The UI below is ready — just needs GPU hardware to actually run.",
+            )
 
         with gr.Row():
             with gr.Column(scale=1):
